@@ -12,6 +12,6 @@ export const productErrorIncompleteValues = (product) => {
   };
   
   export const productErrorDeleteProducts = () => {
-    return `No se pudo eliminar el producto `;
+    return `No se pudo eliminar el productoo `;
   };
   
