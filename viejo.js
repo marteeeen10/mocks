@@ -1,9 +1,10 @@
 import { cartService, productService } from "../services/index.js";
 import productModel from "../dao/mongo/models/products.js";
 import { pid } from "process";
-import ErrorService from "../services/errorService.js";
+import { generateProducts } from "../mocks/products.mocks.js";
+import ErrorService from "../services/ErrorService.js";
 import { productErrorIncompleteValues } from "../constants/productsErrors.js";
-import Errors from "../constants/errors.js";
+import EErrors from "../constants/EErrors.js";
 
 const getProducts = async (req, res) => {
   const { page = 1 } = req.query;
@@ -51,18 +52,19 @@ const postProduct = async (req, res) => {
     !status ||
     !stock ||
     !category
-  ){
+  ) {
     ErrorService.createError({
       name: "Product Creator error",
       cause: productErrorIncompleteValues({ title, description, code }),
       message: "error intentando agregar Productos",
-      code: Errors.INCOMPLETE_VALUES,
+      code: EErrors.INCOMPLETE_VALUES,
       status: 400,
     });
     return res
       .status(400)
       .send({ status: "error", error: "Incomplete Values" });
   }
+
   const product = {
     title,
     description,
