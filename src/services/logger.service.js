@@ -26,7 +26,7 @@ export default class LoggerServices {
             }),
             new winston.transports.File({
               level: "error",
-              filename: "../errors.log",
+              filename: "./errors.log",
               format: winston.format.simple(),
             }),
             new winston.transports.Console({
