@@ -18,26 +18,21 @@ import nodemailer from "nodemailer";
 import twilio from "twilio";
 import mockingRouter from "./routes/mocking.router.js";
 import errorHandler from "./middlewares/error.js";
+import attachLogger from "./middlewares/logger.js";
+import loggerRouter from "./routes/logger.router.js";
 
 const app = express();
+
+app.use(attachLogger);
 const url = config.mongoUrl;
-
-
 const connection = mongoose.connect(url);
-
-const PORT = config.port || 8080;
-const server = app.listen(PORT, () => console.log("escuchando en puerto.."))
-const io = new Server(server);
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(`${__dirname}/public`));
 app.use((req, res, next) => {
   req.io = io;
   next();
 });
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(`${__dirname}/public`));
-
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
@@ -45,6 +40,11 @@ app.use(cookieParser());
 
 initializePassport();
 
+const PORT = config.port || 8080;
+const server = app.listen(PORT, () => console.log("escuchando en puerto.."))
+const io = new Server(server);
+
+app.use("/", loggerRouter);
 app.use("/api/products", ProductsRouter);
 app.use("/api/carts", CartsRouter);
 app.use("/api/tickets", TicketRouter);
